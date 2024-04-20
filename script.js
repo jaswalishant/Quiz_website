@@ -123,7 +123,7 @@ const questions=[
         type: "multiple",
         difficulty: "easy",
         category: "Science: Computers",
-        question: "The programming language &#039;Swift&#039; was created to replace what other programming language?",
+        question: "The programming language 'Swift' was created to replace what other programming language?",
         correct_answer: "Objective-C",
         incorrect_answers: [
             "C#",
@@ -172,11 +172,11 @@ const questions=[
         difficulty: "easy",
         category: "Science: Computers",
         question: "In any programming language, what is the most common way to iterate through an array?",
-        correct_answer: "&#039;For&#039; loops",
+        correct_answer: "'For' loops",
         incorrect_answers: [
-            "&#039;If&#039; Statements",
-            "&#039;Do-while&#039; loops",
-            "&#039;While&#039; loops"
+            "'If' Statements",
+            "'Do-while' loops",
+            "'While' loops"
         ]
     },
     {
@@ -208,10 +208,10 @@ const questions=[
         difficulty: "easy",
         category: "Science: Computers",
         question: "What does the Prt Sc button do?",
-        correct_answer: "Captures what&#039;s on the screen and copies it to your clipboard",
+        correct_answer: "Captures what's on the screen and copies it to your clipboard",
         incorrect_answers: [
             "Nothing",
-            "Saves a .png file of what&#039;s on the screen in your screenshots folder in photos",
+            "Saves a .png file of what's on the screen in your screenshots folder in photos",
             "Closes all windows"
         ]
     },
@@ -267,7 +267,7 @@ const questions=[
         type: "multiple",
         difficulty: "easy",
         category: "Science: Computers",
-        question: "In the programming language Java, which of these keywords would you put on a variable to make sure it doesn&#039;t get modified?",
+        question: "In the programming language Java, which of these keywords would you put on a variable to make sure it doesn't get modified?",
         correct_answer: "Final",
         incorrect_answers: [
             "Static",
@@ -303,7 +303,7 @@ const questions=[
         type: "multiple",
         difficulty: "easy",
         category: "Science: Computers",
-        question: "If you were to code software in this language you&#039;d only be able to type 0&#039;s and 1&#039;s.",
+        question: "If you were to code software in this language you'd only be able to type 0's and 1's.",
         correct_answer: "Binary",
         incorrect_answers: [
             "JavaScript",
@@ -409,84 +409,91 @@ const questions=[
     }
 ];
 
-let questionElement=document.querySelector('.question');
-let answerElement=document.querySelector('.ans');
-let nextbtn=document.querySelector('.next-btn');
+let questionElement=document.querySelector(".question");
+let answerElement=document.querySelector(".ans");
+let nextbtn=document.querySelector(".nextbtn");
 
 let qindex=0;
-let canswer=0;
+let correctAnswer=0;
 
-start=()=>{
+//Starting the quiz
+startQuiz=()=>{
     qindex=0;
-    canswer=0;
-    showquestion();
+    correctAnswer=0;
+    showQuestion();
+    nextbtn.innerHTML="NEXT";
 }
 
-
-resetQ=()=>{
+//reseting of question options
+resetQuestion=()=>{
     nextbtn.style.display="none";
     while(answerElement.firstChild){
         answerElement.removeChild(answerElement.firstChild);
     }
 }
 
-showquestion=()=>{
-    resetQ();
+//Function for the showing the questions
+showQuestion=()=>{
 
-    let currentQ=questions[qindex];
-    let Qno=qindex +1;
-    questionElement.innerHTML=Qno+ ". " + currentQ.question;
+    resetQuestion();
 
-    let correct=currentQ.correct_answer;
-    let incorrect=currentQ.incorrect_answers;
+    let CurrentQuestion=questions[qindex];
+    let QuestionNo=qindex+1;
+    questionElement.innerHTML=QuestionNo+ ". " + CurrentQuestion.question;
+
+    let correct=CurrentQuestion.correct_answer;
+    let incorrect=CurrentQuestion.incorrect_answers;
     let options=incorrect;
-    options.splice(Math.floor(Math.random() * incorrect.length +1),0,correct);
+    options.splice(Math.floor(Math.random() * incorrect.length+1),0, correct);
 
-    currentQ.incorrect_answers.forEach(options=>{
-        let btn= document.createElement('button');
-        btn.innerHTML=options;
+    //inserting the options in answer buttons
+    incorrect.forEach(option=>{
+        let btn=document.createElement("button");
+        btn.innerHTML=option;
         answerElement.append(btn);
-        btn.classList.add("btn");
 
+        //seletion of option
         btn.addEventListener("click", select=(e)=>{
-            let right=true;
-            let correctans;
-            if(options==currentQ.correct_answer){
-                correctans= e.target.classList.add("correct")
-                right=false;
-                canswer+=1;
+            if(e.target.textContent===correct){
+                e.target.classList.add("correct");
+                correctAnswer+=1;
             }
             else{
-                e.target.classList.add("incorrect")
-                right=true;
+                e.target.classList.add("incorrect");
             }
-            Array.from(answerElement.children).forEach(button=>{
-                if(options!=correct){   
-                    Array.from(answerElement.children).forEach(b=>{
-                        if(b.textContent==correct){
-                            b.classList.add("correct")
+
+            Array.from(answerElement.children).forEach(selection=>{
+                if(options!=correct){
+                    Array.from(answerElement.children).forEach(option=>{
+                        if(option.textContent===correct){
+                            option.classList.add("correct");
                         }
-                    })
+                    });
                 }
-                button.disabled="true"
-            })
-            nextbtn.style.display="block";
-            while(qindex==questions.length-1){
-                nextbtn.innerHTML="submit";
-                break;
-            }
-        })
-    })
-}
+                selection.disabled="true";
+                nextbtn.style.display="block"
+            });
+        });
+    });
+};
+
+// Function for next Question and Submit
 next=()=>{
     if(qindex<questions.length-1){
-        qindex+=1;
-        showquestion();
+    qindex+=1;
+    showQuestion();
+    while(qindex===questions.length-1){
+        nextbtn.innerHTML="Submit";
+        break;
+    }
     }
     else{
-        questionElement.style.textAlign="center";
-        questionElement.innerHTML=`You answered ${canswer} out of ${questions.length} questions`;
-        resetQ();       
+        questionElement.innerHTML="Congratulations";
+        questionElement.classList.add("congrats");
+        resetQuestion();
+        answerElement.innerHTML=`You answered ${correctAnswer} out of ${qindex+1} questions`;
+        answerElement.classList.add("marks");
     }
 }
-start();
+
+startQuiz();
